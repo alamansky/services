@@ -1,0 +1,8 @@
+server {
+	listen ${PORT};	
+	location / {
+		root ${INTERNAL_ROOT};
+		autoindex on;
+	}
+}
+
