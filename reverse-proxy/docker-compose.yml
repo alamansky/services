@@ -1,0 +1,25 @@
+version: "3"
+services:
+  reverse-proxy:
+    image: nginx:1.29.3
+    volumes:
+      - ${HOME}/services/reverse-proxy/site.conf.template:/etc/nginx/conf.d/site.conf.template
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      # localhost IP address
+      - HOST=${HOST}
+      # port listening to incoming HTTP traffic
+      - PORT=${PORT}
+      # host machine IP address
+      - IP=${IP}
+      # server domain name, e.g. xyz.com
+      - DOMAIN=${DOMAIN}
+      # port/subdomain pairs for services behind the reverse proxy
+      - STATIC_PORT=${STATIC_PORT}
+      - STATIC_SUBDOMAIN=${STATIC_SUBDOMAIN}
+      - MEDIA_PORT=${MEDIA_PORT}
+      - MEDIA_SUBDOMAIN=${MEDIA_SUBDOMAIN}
+      - BLOG_PORT=${BLOG_PORT}
+    command: /bin/bash -c "envsubst '$${HOST} $${PORT} $${IP} $${DOMAIN} $${STATIC_PORT} $${STATIC_SUBDOMAIN} $${MEDIA_PORT} $${MEDIA_SUBDOMAIN} $${BLOG_PORT}' < /etc/nginx/conf.d/site.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    restart: always
